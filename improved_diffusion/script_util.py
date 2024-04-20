@@ -112,7 +112,7 @@ def create_model(
     return UNetModel(
         in_channels=3,
         model_channels=num_channels,
-        out_channels=(3 if not learn_sigma else 6),
+        out_channels=(3 if not learn_sigma else 6),  # 需要预测方差的话, 方差的维度和x相同, 故此时输出通道设置为6
         num_res_blocks=num_res_blocks,
         attention_resolutions=tuple(attention_ds),
         dropout=dropout,

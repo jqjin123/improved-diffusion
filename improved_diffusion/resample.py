@@ -134,15 +134,15 @@ class LossSecondMomentResampler(LossAwareSampler):
     def weights(self):
         if not self._warmed_up():
             return np.ones([self.diffusion.num_timesteps], dtype=np.float64)
-        weights = np.sqrt(np.mean(self._loss_history ** 2, axis=-1))
+        weights = np.sqrt(np.mean(self._loss_history ** 2, axis=-1))  # 损失越大 权重越大
         weights /= np.sum(weights)
-        weights *= 1 - self.uniform_prob
+        weights *= 1 - self.uniform_prob  # loss权重+均匀权重相结合
         weights += self.uniform_prob / len(weights)
         return weights
 
     def update_with_all_losses(self, ts, losses):
         for t, loss in zip(ts, losses):
-            if self._loss_counts[t] == self.history_per_term:
+            if self._loss_counts[t] == self.history_per_term:  # 每个时刻保留10个历史loss值
                 # Shift out the oldest loss term.
                 self._loss_history[t, :-1] = self._loss_history[t, 1:]
                 self._loss_history[t, -1] = loss

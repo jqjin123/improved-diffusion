@@ -138,9 +138,9 @@ class GaussianDiffusion:
         self.num_timesteps = int(betas.shape[0])
 
         alphas = 1.0 - betas
-        self.alphas_cumprod = np.cumprod(alphas, axis=0)
-        self.alphas_cumprod_prev = np.append(1.0, self.alphas_cumprod[:-1])
-        self.alphas_cumprod_next = np.append(self.alphas_cumprod[1:], 0.0)
+        self.alphas_cumprod = np.cumprod(alphas, axis=0)  # alpha_bar_t
+        self.alphas_cumprod_prev = np.append(1.0, self.alphas_cumprod[:-1])  # alpha_bar_t-1
+        self.alphas_cumprod_next = np.append(self.alphas_cumprod[1:], 0.0)  # alpha_bar_t+1
         assert self.alphas_cumprod_prev.shape == (self.num_timesteps,)
 
         # calculations for diffusion q(x_t | x_{t-1}) and others
@@ -661,7 +661,7 @@ class GaussianDiffusion:
         kl = normal_kl(
             true_mean, true_log_variance_clipped, out["mean"], out["log_variance"]
         )
-        kl = mean_flat(kl) / np.log(2.0)
+        kl = mean_flat(kl) / np.log(2.0)  # np.log和torch.log都是已自然对数为底, 除以np.log(2.0)后, 转为已2为底
 
         decoder_nll = -discretized_gaussian_log_likelihood(
             x_start, means=out["mean"], log_scales=0.5 * out["log_variance"]

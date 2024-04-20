@@ -194,7 +194,7 @@ class TrainLoop:
                 for k, v in cond.items()
             }
             last_batch = (i + self.microbatch) >= batch.shape[0]
-            t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())
+            t, weights = self.schedule_sampler.sample(micro.shape[0], dist_util.dev())  # 按权重采样t
 
             compute_losses = functools.partial(
                 self.diffusion.training_losses,
@@ -215,7 +215,7 @@ class TrainLoop:
                     t, losses["loss"].detach()
                 )
 
-            loss = (losses["loss"] * weights).mean()
+            loss = (losses["loss"] * weights).mean()  # 按权重刷新loss值
             log_loss_dict(
                 self.diffusion, t, {k: v * weights for k, v in losses.items()}
             )

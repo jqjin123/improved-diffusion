@@ -311,7 +311,7 @@ class UNetModel(nn.Module):
         dims=2,
         num_classes=None,
         use_checkpoint=False,
-        num_heads=1,
+        num_heads=1,  # 使用了多头注意力
         num_heads_upsample=-1,
         use_scale_shift_norm=False,
     ):
@@ -341,7 +341,7 @@ class UNetModel(nn.Module):
         )
 
         if self.num_classes is not None:
-            self.label_emb = nn.Embedding(num_classes, time_embed_dim)
+            self.label_emb = nn.Embedding(num_classes, time_embed_dim)  # 除了输入噪声、时间步骤, 还可以添加类别标签, 那么就可以生成该类别的图像, 类似于条件Gan
 
         self.input_blocks = nn.ModuleList(
             [

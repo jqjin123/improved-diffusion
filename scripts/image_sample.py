@@ -45,7 +45,7 @@ def main():
             classes = th.randint(
                 low=0, high=NUM_CLASSES, size=(args.batch_size,), device=dist_util.dev()
             )
-            model_kwargs["y"] = classes
+            model_kwargs["y"] = classes  # 采样的时候可以给类别标签, 则会生成该类别的图像
         sample_fn = (
             diffusion.p_sample_loop if not args.use_ddim else diffusion.ddim_sample_loop
         )
